@@ -13,6 +13,9 @@ export class Movie {
 
   @Prop({ required: true })
   rate: Number;
+
+  @Prop()
+  image: String;
 }
 
 export const MovieShema = SchemaFactory.createForClass(Movie);

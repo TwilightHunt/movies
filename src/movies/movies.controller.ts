@@ -8,9 +8,12 @@ import {
   Query,
   Delete,
   BadRequestException,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { MovieDto } from './dto/movie.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('movies')
 export class MoviesController {
@@ -22,9 +25,13 @@ export class MoviesController {
     return movies;
   }
 
+  @UseInterceptors(FileInterceptor('image'))
   @Post()
-  async addNewMovie(@Body() movieDto: MovieDto) {
-    const movie = await this.moviesService.create(movieDto);
+  async addNewMovie(
+    @Body() movieDto: MovieDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const movie = await this.moviesService.create(movieDto, file);
     return { movie };
   }
 

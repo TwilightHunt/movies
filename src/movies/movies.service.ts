@@ -1,8 +1,9 @@
-import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Movie, MovieDocument } from './movie.schema';
 import { MovieDto } from './dto/movie.dto';
+import { FilesService } from 'src/files/files.service';
 
 type SortingMethod = 'rate' | 'title' | 'year';
 type SortingDirection = 1 | -1;
@@ -12,14 +13,17 @@ export class MoviesService {
   constructor(
     @InjectModel(Movie.name)
     private movieModel: Model<MovieDocument>,
+    private fileService: FilesService,
   ) {}
 
-  async create(movieDto: MovieDto): Promise<MovieDocument> {
+  async create(movieDto: MovieDto, image): Promise<MovieDocument> {
     if (!movieDto.title || !movieDto.description) {
       throw new BadRequestException('Title or description are not provided');
     }
 
-    const newMovie = new this.movieModel(movieDto);
+    const fileName = await this.fileService.createFile(image);
+    const newMovie = new this.movieModel({ ...movieDto, image: fileName });
+
     return newMovie.save();
   }
 
