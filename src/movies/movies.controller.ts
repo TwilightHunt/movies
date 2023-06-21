@@ -41,9 +41,14 @@ export class MoviesController {
     return { movie };
   }
 
+  @UseInterceptors(FileInterceptor('image'))
   @Put('/:id')
-  async updateMovie(@Param() param, @Body() body) {
-    const movie = await this.moviesService.update(param.id, body);
+  async updateMovie(
+    @Param() param,
+    @Body() body,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const movie = await this.moviesService.update(param.id, body, file);
     return { movie };
   }
 

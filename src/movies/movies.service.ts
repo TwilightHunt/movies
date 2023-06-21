@@ -44,8 +44,13 @@ export class MoviesService {
   async update(
     movieId: string,
     newData: MovieDocument,
+    image: any,
   ): Promise<MovieDocument> {
     try {
+      if (image) {
+        let fileName = await this.fileService.createFile(image);
+        newData.image = fileName;
+      }
       const movie = await this.movieModel.findByIdAndUpdate(
         movieId,
         { ...newData },
