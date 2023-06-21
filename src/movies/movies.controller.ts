@@ -5,7 +5,9 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Delete,
+  BadRequestException,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { MovieDto } from './dto/movie.dto';
@@ -43,5 +45,18 @@ export class MoviesController {
     await this.moviesService.delete(param.id);
     const movies = await this.moviesService.getAllMovies();
     return movies;
+  }
+
+  @Get('/sort/:method')
+  async sortMovies(@Query() query, @Param() param) {
+    try {
+      const movies = await this.moviesService.sort(
+        param.method,
+        query.direction,
+      );
+      return movies;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

@@ -10,6 +10,9 @@ export class Movie {
 
   @Prop({ required: true })
   description: String;
+
+  @Prop({ required: true })
+  rate: Number;
 }
 
 export const MovieShema = SchemaFactory.createForClass(Movie);

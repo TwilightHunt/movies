@@ -4,6 +4,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Movie, MovieDocument } from './movie.schema';
 import { MovieDto } from './dto/movie.dto';
 
+type SortingMethod = 'rate' | 'title' | 'year';
+type SortingDirection = 1 | -1;
+
 @Injectable()
 export class MoviesService {
   constructor(
@@ -52,5 +55,14 @@ export class MoviesService {
 
   async delete(movieId: string) {
     await this.movieModel.findByIdAndDelete(movieId);
+  }
+
+  async sort(method: SortingMethod, direction: SortingDirection) {
+    if (method === 'rate') {
+      const movies = await this.movieModel.find().sort({ rate: direction });
+      return movies;
+    } else {
+      throw new BadRequestException('Invalid sorting method');
+    }
   }
 }
