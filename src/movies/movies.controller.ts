@@ -10,10 +10,12 @@ import {
   BadRequestException,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { MovieDto } from './dto/movie.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('movies')
 export class MoviesController {
@@ -25,6 +27,7 @@ export class MoviesController {
     return movies;
   }
 
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
   @Post()
   async addNewMovie(
@@ -41,6 +44,7 @@ export class MoviesController {
     return { movie };
   }
 
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
   @Put('/:id')
   async updateMovie(
@@ -52,6 +56,7 @@ export class MoviesController {
     return { movie };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('/:id')
   async deleteMovie(@Param() param) {
     await this.moviesService.delete(param.id);
