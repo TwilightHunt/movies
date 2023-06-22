@@ -11,6 +11,8 @@ import {
   UseInterceptors,
   UploadedFile,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { MovieDto } from './dto/movie.dto';
@@ -27,6 +29,7 @@ export class MoviesController {
     return movies;
   }
 
+  @UsePipes(ValidationPipe)
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
   @Post()
@@ -44,6 +47,7 @@ export class MoviesController {
     return { movie };
   }
 
+  @UsePipes(ValidationPipe)
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('image'))
   @Put('/:id')

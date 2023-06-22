@@ -17,9 +17,10 @@ export class MoviesService {
   ) {}
 
   async create(movieDto: MovieDto, image): Promise<MovieDocument> {
-    if (!movieDto.title || !movieDto.description) {
-      throw new BadRequestException('Title or description are not provided');
-    }
+    if (movieDto.rate > 10)
+      throw new BadRequestException('Rate cannot be greater than 10');
+    if (movieDto.rate < 1)
+      throw new BadRequestException('Rate cannot be less than 10');
 
     const fileName = await this.fileService.createFile(image);
     const newMovie = new this.movieModel({ ...movieDto, image: fileName });
@@ -51,6 +52,14 @@ export class MoviesService {
         let fileName = await this.fileService.createFile(image);
         newData.image = fileName;
       }
+
+      if (newData.rate) {
+        if (newData.rate > 10)
+          throw new BadRequestException('Rate cannot be greater than 10');
+        if (newData.rate < 1)
+          throw new BadRequestException('Rate cannot be less than 10');
+      }
+
       const movie = await this.movieModel.findByIdAndUpdate(
         movieId,
         { ...newData },
