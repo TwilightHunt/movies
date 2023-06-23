@@ -25,8 +25,12 @@ export class MoviesController {
 
   @Get()
   async getMovies() {
-    const movies = await this.moviesService.getAllMovies();
-    return movies;
+    try {
+      const movies = await this.moviesService.getAllMovies();
+      return movies;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @UsePipes(ValidationPipe)
@@ -37,14 +41,22 @@ export class MoviesController {
     @Body() movieDto: MovieDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const movie = await this.moviesService.create(movieDto, file);
-    return { movie };
+    try {
+      const movie = await this.moviesService.create(movieDto, file);
+      return { movie };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Get('/:id')
   async getMovieById(@Param() param) {
-    const movie = await this.moviesService.getMovieById(param.id);
-    return { movie };
+    try {
+      const movie = await this.moviesService.getMovieById(param.id);
+      return { movie };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @UsePipes(ValidationPipe)
@@ -56,16 +68,24 @@ export class MoviesController {
     @Body() body,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const movie = await this.moviesService.update(param.id, body, file);
-    return { movie };
+    try {
+      const movie = await this.moviesService.update(param.id, body, file);
+      return { movie };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete('/:id')
   async deleteMovie(@Param() param) {
-    await this.moviesService.delete(param.id);
-    const movies = await this.moviesService.getAllMovies();
-    return movies;
+    try {
+      await this.moviesService.delete(param.id);
+      const movies = await this.moviesService.getAllMovies();
+      return movies;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Get('/sort/:method')

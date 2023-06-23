@@ -31,12 +31,16 @@ export class AuthService {
   }
 
   async login(authDto: AuthDto) {
-    const user = await this.usersModel.findOne({ login: authDto.login });
+    const { login, password } = authDto;
+    if (!login || !password) {
+      throw new BadRequestException('Login or password is not specified');
+    }
+    const user = await this.usersModel.findOne({ login });
     if (!user) {
       throw new BadRequestException('User does not exists');
     }
 
-    if (!bcrypt.compareSync(authDto.password, user.password)) {
+    if (!bcrypt.compareSync(password, user.password)) {
       throw new BadRequestException('Password is incorrect');
     }
 
